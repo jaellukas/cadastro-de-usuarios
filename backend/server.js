@@ -9,24 +9,24 @@ app.use(cors())
 
 const sql = postgres(process.env.DATABASE_URL, { ssl: 'require' })
 
-    app.post('/usuarios', async (req, res) => {
-        try {
-            const name = req.body.name || req.body.nomne || ""
-            const email = req.body.email || ""
-            const age = req.body.age || req.body.idade || null
+app.post('/usuarios', async (req, res) => {
+    try {
+        const name = req.body.name || req.body.nomne || ""
+        const email = req.body.email || ""
+        const age = req.body.age || req.body.idade || null
 
-            const [newUser] = await sql`
+        const [newUser] = await sql`
             INSERT INTO "User" (name, email, age) 
             VALUES (${name}, ${email}, ${age})
             RETURNING *
         `
 
-            res.status(201).json(newUser)
-        } catch (error) {
-            console.error("ERRO NO BANCO:", error.message)
-            res.status(500).json({ error: error.message })
-        }
-    })
+        res.status(201).json(newUser)
+    } catch (error) {
+        console.error("ERRO NO BANCO:", error.message)
+        res.status(500).json({ error: error.message })
+    }
+})
 
 app.get('/usuarios', async (req, res) => {
     try {
@@ -104,4 +104,8 @@ app.delete('/usuarios/:id', async (req, res) => {
     }
 })
 
-app.listen(3000, () => console.log('Servidor rodando na porta 3000!'))
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+});
